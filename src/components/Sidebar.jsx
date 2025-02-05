@@ -103,6 +103,13 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
         </select>
       </div>
 
+      {/* Generate Button */}
+      <button className="mt-4 rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600">
+        Generate Report
+      </button>
+
+      {/* Commented out Recent Reports */}
+      {/*
       <div className="flex max-h-fit w-full flex-col justify-between gap-2 border-b-2 border-t-2 border-gray-300 mt-4">
         <p className="text-sm font-bold">Recent Reports</p>
         <div className="flex flex-col gap-4 overflow-x-hidden">
@@ -116,6 +123,8 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
           ))}
         </div>
       </div>
+      */}
+
       <div className="justify-betwen mt-auto flex flex-col items-center gap-1">
         <div>User Guide</div>
         <div>Settings</div>

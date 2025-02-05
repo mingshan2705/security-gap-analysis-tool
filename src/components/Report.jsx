@@ -8,8 +8,9 @@ function Report({ currResponse }) {
   return (
     <section className="flex h-full w-1/2 flex-col gap-4 p-2">
       <div className="flex gap-2 text-center">
-        {tabs.map((tab) => (
+        {tabs.map((tab, index) => (
           <button
+            key={index}
             className={`cursor-pointer rounded-lg border-2 border-gray-300 px-4 py-2 transition-colors duration-150 ease-in-out hover:bg-gray-200 ${currTab === tab && "bg-gray-200"}`}
             onClick={() => setCurrTab(tab)}
           >

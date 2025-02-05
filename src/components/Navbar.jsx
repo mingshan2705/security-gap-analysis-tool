@@ -8,7 +8,7 @@ function Navbar() {
           <li>Home</li>
         </ul>
         <div className="flex aspect-square w-12 items-center justify-center rounded-full border-2 border-black bg-gray-300">
-          XJ
+          MS
         </div>
       </nav>
     </header>
