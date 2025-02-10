@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-function Navbar() {
+function Navbar({ onSelectReport, refreshReports }) {
   const [recentReports, setRecentReports] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -9,7 +9,12 @@ function Navbar() {
     fetch("http://localhost:8000/api/reports")
       .then(response => response.json())
       .then(data => setRecentReports(data));
-  }, []);
+  }, [refreshReports]);
+
+  const handleSelectReport = (requestId) => {
+    onSelectReport(requestId);
+    setDropdownOpen(false);
+  };
 
   return (
     <header className="fixed left-[18dvw] right-0 top-0 z-50 flex h-[10dvh] items-center justify-end border bg-gray-50 px-8 py-2 text-sm font-medium shadow-lg">
@@ -26,14 +31,13 @@ function Navbar() {
               <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg z-50">
                 {recentReports.length > 0 ? (
                   recentReports.map((report, index) => (
-                    <Link
+                    <button
                       key={index}
-                      to={`/report/${report.requestId}`}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={() => setDropdownOpen(false)}
+                      onClick={() => handleSelectReport(report.requestId)}
+                      className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 text-left"
                     >
                       {report.reportName}
-                    </Link>
+                    </button>
                   ))
                 ) : (
                   <div className="px-4 py-2 text-sm text-gray-700">No reports available</div>

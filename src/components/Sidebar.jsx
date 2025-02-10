@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange, selectedDataClassification, selectedSensitivityClassification }) {
+function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange, selectedDataClassification, selectedSensitivityClassification, onGenerateReport, onRefreshReports }) {
   const dataClassificationOptions = [
     { title: "Confidential", description: "" },
     { title: "Confidential (Cloud-Eligible)", description: "" },
@@ -90,6 +90,8 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
       }).then(response => {
         if (response.ok) {
           alert("Report generated successfully!");
+          onGenerateReport(reportData.requestId);  // Call onGenerateReport with the new requestId
+          onRefreshReports();  // Call onRefreshReports to refresh the recent reports
         } else {
           alert("Failed to generate report.");
         }

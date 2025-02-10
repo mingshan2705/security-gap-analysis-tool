@@ -18,13 +18,13 @@ reports = []
 # Dummy orchestrator output generator
 def dummy_orchestrator(input_json):
     sample = {
-        "requestId": f"{input_json["requestId"]}",
-        "reportName": f"{input_json["reportName"]}",
-        "submitDate": f"{input_json["submitDateTime"]}",
+        "requestId": f"{input_json['requestId']}",
+        "reportName": f"{input_json['reportName']}",
+        "submitDate": f"{input_json['submitDateTime']}",
         "testOutput": [
             {
                 "testOutputID": "output 1",
-                "riskStatement": f"[{input_json["dataClassification"]}] generated risk statement 1",
+                "riskStatement": f"[{input_json['dataClassification']}] generated risk statement 1",
                 "testProcedure": "generated test procedure 1",
                 "sourceDocumentLink": "reference document link 1",
                 "citation": "generated citation 1",
@@ -33,7 +33,7 @@ def dummy_orchestrator(input_json):
             },
             {
                 "testOutputID": "output 2",
-                "riskStatement": f"[{input_json["sensitivityClassification"]}] generated risk statement 2",
+                "riskStatement": f"[{input_json['sensitivityClassification']}] generated risk statement 2",
                 "testProcedure": "generated test procedure 2",
                 "sourceDocumentLink": "reference document link 2",
                 "citation": "generated citation 2",
@@ -55,3 +55,14 @@ async def generate_report(report_data: dict):
 @app.get("/api/reports")
 async def get_reports():
     return reports
+
+@app.get("/api/reports/{request_id}")
+async def get_report_by_id(request_id: str):
+    for report in reports:
+        if report["requestId"] == request_id:
+            return report
+    return {"message": "Report not found"}
+
+@app.get("/api/health")
+async def health_check():
+    return {"status": "ok"}
