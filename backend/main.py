@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+import pandas as pd
 
 app = FastAPI()
 
@@ -43,6 +44,7 @@ def dummy_orchestrator(input_json):
         ]
     }
     return sample
+
 
 @app.post("/api/generate-report")
 async def generate_report(report_data: dict):
