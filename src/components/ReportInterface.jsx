@@ -17,13 +17,20 @@ function ReportInterface({ requestId, onGenerateReport }) {
   }, [requestId]);
 
   const handleDownloadReport = () => {
-    // Logic to download the report
-    const element = document.createElement("a");
-    const file = new Blob([JSON.stringify(report, null, 2)], { type: "application/json" });
-    element.href = URL.createObjectURL(file);
-    element.download = `${report.reportName}.json`;
-    document.body.appendChild(element);
-    element.click();
+    // Logic to download the report from the backend
+    fetch(`http://localhost:8000/api/reports/${requestId}/download`)
+      .then(response => response.blob())
+      .then(blob => {
+        const url = window.URL.createObjectURL(new Blob([blob]));
+        const link = document.createElement('a');
+        link.href = url;
+        const date = new Date(report.submitDate);
+        const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+        link.setAttribute('download', `${report.reportName}_${formattedDate}.xlsx`);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+      });
   };
 
   return (
@@ -35,7 +42,7 @@ function ReportInterface({ requestId, onGenerateReport }) {
             onClick={handleDownloadReport}
             className="ml-4 rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
           >
-            Download
+            Download Report
           </button>
         )}
       </div>

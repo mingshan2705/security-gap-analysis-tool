@@ -1,6 +1,8 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 import pandas as pd
+import io
+from fastapi.responses import StreamingResponse
 
 app = FastAPI()
 
@@ -45,7 +47,6 @@ def dummy_orchestrator(input_json):
     }
     return sample
 
-
 @app.post("/api/generate-report")
 async def generate_report(report_data: dict):
     # ping orchestrator (the real one)
@@ -63,6 +64,23 @@ async def get_report_by_id(request_id: str):
     for report in reports:
         if report["requestId"] == request_id:
             return report
+    return {"message": "Report not found"}
+
+@app.get("/api/reports/{request_id}/download")
+async def download_report(request_id: str):
+    for report in reports:
+        if report["requestId"] == request_id:
+            df = pd.DataFrame(report["testOutput"])
+            output = io.BytesIO()
+            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                df.to_excel(writer, index=False, sheet_name='Report')
+                writer.book.close()  # Ensure the workbook is properly closed
+            output.seek(0)
+            submit_date = pd.to_datetime(report["submitDate"]).strftime('%d-%m-%Y')
+            headers = {
+                'Content-Disposition': f'attachment; filename="{report["reportName"]}_{submit_date}.xlsx"'
+            }
+            return StreamingResponse(output, headers=headers, media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     return {"message": "Report not found"}
 
 @app.get("/api/health")
