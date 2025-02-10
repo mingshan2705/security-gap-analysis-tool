@@ -28,7 +28,7 @@ function Navbar({ onSelectReport, refreshReports }) {
               Recent Reports
             </button>
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg z-50">
+              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg z-50 max-h-[50vh] overflow-y-auto">
                 {recentReports.length > 0 ? (
                   recentReports.map((report, index) => (
                     <button

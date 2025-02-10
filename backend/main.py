@@ -26,7 +26,6 @@ def dummy_orchestrator(input_json):
         "submitDate": f"{input_json['submitDateTime']}",
         "testOutput": [
             {
-                "testOutputID": "output 1",
                 "riskStatement": f"[{input_json['dataClassification']}] generated risk statement 1",
                 "testProcedure": "generated test procedure 1",
                 "sourceDocumentLink": "reference document link 1",
@@ -35,7 +34,6 @@ def dummy_orchestrator(input_json):
                 "recommendation": "generated recommendation 1"
             },
             {
-                "testOutputID": "output 2",
                 "riskStatement": f"[{input_json['sensitivityClassification']}] generated risk statement 2",
                 "testProcedure": "generated test procedure 2",
                 "sourceDocumentLink": "reference document link 2",
