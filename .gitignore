@@ -7,6 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Node modules
 node_modules
 dist
 dist-ssr
@@ -24,7 +25,8 @@ dist-ssr
 *.sw?
 
 # Python cache files
-__pycache__/
+*.__pycache__/
 *.py[cod]
 
+# Custom directories
 input_test_files
