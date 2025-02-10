@@ -23,7 +23,7 @@ function Home() {
           Configuration checks could take a lot of time and is very manually
           intensive.
         </p>
-        <Link to="/dashboard/chat">
+        <Link to="/dashboard/report">
           <button className="w-full rounded-2xl bg-blue-400 p-4 font-semibold text-white transition-colors duration-150 hover:bg-blue-500">
             Get Started
           </button>
