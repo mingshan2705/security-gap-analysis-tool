@@ -89,6 +89,7 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
         body: JSON.stringify(reportData),
       }).then(response => {
         if (response.ok) {
+          // alert("Report generated successfully!");
           onGenerateReport(reportData.requestId);  // Call onGenerateReport with the new requestId
           onRefreshReports();  // Call onRefreshReports to refresh the recent reports
         } else {
