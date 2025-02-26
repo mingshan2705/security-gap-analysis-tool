@@ -17,16 +17,19 @@ COPY . .
 RUN npm run build
 
 # ------------------------------------------
-# Use a lightweight image to serve the built app
+# Use a lightweight Node.js image to serve the built app
 FROM node:18-alpine
 
 WORKDIR /app
 
+# Install serve (lightweight static file server)
+RUN npm install -g serve
+
 # Copy the built frontend from the previous stage
 COPY --from=builder /app/dist /app/dist
 
-# Expose the port for Vite preview
-EXPOSE 5173
+# Expose the port for static file serving
+EXPOSE 3000
 
-# Start the preview server, ensuring it points to the correct directory
-CMD ["npx", "vite", "preview", "--port", "5173", "--host"]
+# Use `serve` to host the static files
+CMD ["serve", "-s", "dist", "-l", "3000"]

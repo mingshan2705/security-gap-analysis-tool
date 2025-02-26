@@ -6,7 +6,9 @@ function Navbar({ onSelectReport, refreshReports }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:8000/api/reports")
+    fetch("https://sga-backend1-ekdwgybbecgbedhk.southeastasia-01.azurewebsites.net/api/reports", {
+      mode: 'cors'
+    })
       .then(response => response.json())
       .then(data => setRecentReports(data));
   }, [refreshReports]);

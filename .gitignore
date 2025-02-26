@@ -30,3 +30,4 @@ dist-ssr
 
 # Custom directories
 input_test_files
+.env

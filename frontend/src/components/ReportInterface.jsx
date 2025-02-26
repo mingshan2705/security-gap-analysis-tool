@@ -5,7 +5,9 @@ function ReportInterface({ requestId, onGenerateReport }) {
 
   useEffect(() => {
     if (requestId) {
-      fetch(`http://localhost:8000/api/reports/${requestId}`)
+      fetch(`https://sga-backend1-ekdwgybbecgbedhk.southeastasia-01.azurewebsites.net/api/reports/${requestId}`, {
+        mode: 'cors'
+      })
         .then((response) => response.json())
         .then((data) => {
           console.log("Fetched report:", data);
@@ -17,15 +19,17 @@ function ReportInterface({ requestId, onGenerateReport }) {
   }, [requestId]);
 
   const handleDownloadReport = () => {
-    fetch(`http://localhost:8000/api/reports/${requestId}/download`)
+    fetch(`https://sga-backend1-ekdwgybbecgbedhk.southeastasia-01.azurewebsites.net/api/reports/${requestId}/download`, {
+      mode: 'cors'
+    })
       .then(response => response.blob())
       .then(blob => {
         const url = window.URL.createObjectURL(new Blob([blob]));
         const link = document.createElement('a');
         link.href = url;
-        const date = new Date(report.submitDate);
+        const date = new Date(report.submitdatetime);
         const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
-        link.setAttribute('download', `${report.reportName}_${formattedDate}.xlsx`);
+        link.setAttribute('download', `${report.reportname}_${formattedDate}.xlsx`);
         document.body.appendChild(link);
         link.click();
         link.parentNode.removeChild(link);
@@ -47,15 +51,15 @@ function ReportInterface({ requestId, onGenerateReport }) {
       </div>
       {report ? (
         <div className="flex-grow p-6 border rounded-lg shadow-lg bg-white">
-          <h3 className="text-xl font-semibold mb-2">{report.reportName}</h3>
-          <p className="mb-1"><strong>Request ID:</strong> {report.requestId}</p>
-          <p className="mb-4"><strong>Date Requested:</strong> {new Date(report.submitDate).toLocaleString()}</p>
+          <h3 className="text-xl font-semibold mb-2">{report.reportname}</h3>
+          <p className="mb-1"><strong>Request ID:</strong> {report.requestid}</p>
+          <p className="mb-4"><strong>Date Requested:</strong> {new Date(report.submitdatetime).toLocaleString()}</p>
           <h4 className="text-lg font-semibold mb-2">Report Data</h4>
           <div className="overflow-x-auto">
             <table className="min-w-full bg-white mt-2 border">
               <thead>
                 <tr>
-                  {Object.keys(report.testOutput[0]).filter(key => key !== 'testOutputID').map((key) => (
+                  {Object.keys(report.testoutput[0]).filter(key => key !== 'testoutputid').map((key) => (
                     <th key={key} className="py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-600">
                       {key}
                     </th>
@@ -63,9 +67,9 @@ function ReportInterface({ requestId, onGenerateReport }) {
                 </tr>
               </thead>
               <tbody>
-                {report.testOutput.map((row, rowIndex) => (
+                {report.testoutput.map((row, rowIndex) => (
                   <tr key={rowIndex}>
-                    {Object.entries(row).filter(([key]) => key !== 'testOutputID').map(([key, value], colIndex) => (
+                    {Object.entries(row).filter(([key]) => key !== 'testoutputid').map(([key, value], colIndex) => (
                       <td key={colIndex} className="py-2 px-4 border-b border-gray-200 text-sm">
                         {value}
                       </td>

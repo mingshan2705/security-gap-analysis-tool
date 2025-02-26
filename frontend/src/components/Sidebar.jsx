@@ -73,19 +73,20 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
         return newCount;
       });
       const reportData = {
-        requestId: `sga${String(requestCount + 1).padStart(4, '0')}`,
-        reportName,
-        submitDateTime: new Date().toISOString(),
-        dataClassification,
-        sensitivityClassification,
-        testInput: filesContent,
+        requestid: `sga${String(requestCount + 1).padStart(4, '0')}`,
+        reportname: reportName,
+        submitdatetime: new Date().toISOString(),
+        dataclassification: dataClassification,
+        sensitivityclassification: sensitivityClassification,
+        testinput: filesContent,
       };
 
-      fetch("http://localhost:8000/api/generate-report", {  // Update with your backend's URL and port
+      fetch("https://sga-backend1-ekdwgybbecgbedhk.southeastasia-01.azurewebsites.net/api/generate-report", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        mode: 'cors',
         body: JSON.stringify(reportData),
       }).then(response => {
         if (response.ok) {
