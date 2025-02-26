@@ -1,4 +1,4 @@
-import { Home, Chat, NewChat } from "@/sections";
+import { Home, Chat } from "@/sections"; // Removed NewChat import
 import { DashboardLayout } from "@/layouts";
 import { Routes, Route } from "react-router-dom";
 
@@ -8,7 +8,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/dashboard" element={<DashboardLayout />}>
-          <Route index element={<NewChat />} />
+          {/* Removed NewChat route */}
           <Route path="chat" element={<Chat />} />
         </Route>
       </Routes>
