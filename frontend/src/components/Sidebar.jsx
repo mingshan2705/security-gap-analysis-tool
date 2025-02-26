@@ -81,6 +81,8 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
         testinput: filesContent,
       };
 
+      onGenerateReport(reportData.requestid);  // Immediately display the ReportInterface with the new requestId
+
       fetch("https://sga-backend1-ekdwgybbecgbedhk.southeastasia-01.azurewebsites.net/api/generate-report", {
         method: 'POST',
         headers: {
@@ -90,12 +92,12 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
         body: JSON.stringify(reportData),
       }).then(response => {
         if (response.ok) {
-          // alert("Report generated successfully!");
-          onGenerateReport(reportData.requestId);  // Call onGenerateReport with the new requestId
           onRefreshReports();  // Call onRefreshReports to refresh the recent reports
         } else {
           alert("Failed to generate report.");
         }
+      }).catch(() => {
+        alert("Failed to generate report.");
       });
     }).catch(error => {
       console.error("Error reading files:", error);
