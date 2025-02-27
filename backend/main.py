@@ -42,9 +42,6 @@ async def generate_report(report_data: dict):
         "azureml-model-deployment": prompt_flow_model_deployment
     }
 
-    report_data["status"] = "in progress"
-    reports.append(report_data)
-
     try:
         response = requests.post(prompt_flow_url, json=report_data, headers=headers)
 
@@ -55,20 +52,18 @@ async def generate_report(report_data: dict):
                 "response_text": response.text
             }
             print("🚨 API Error:", error_details)
-            report_data["status"] = "error"
             raise HTTPException(status_code=response.status_code, detail=error_details)
 
         result = response.json()
         print("✅ API Request Successful!", result)
 
         report_data.update(result)
-        report_data["status"] = "completed"
+        reports.append(report_data)  # Append the report only when the result JSON is received
 
         return {"message": "Report generated successfully", "data": result}
 
     except requests.RequestException as error:
         print("⚠️ Request Exception:", error)
-        report_data["status"] = "error"
         raise HTTPException(status_code=500, detail="Request failed. Check backend logs for details.")
 
 @app.get("/api/reports")
