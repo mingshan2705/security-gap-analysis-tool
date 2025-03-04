@@ -19,7 +19,7 @@ function Navbar({ onSelectReport, refreshReports }) {
   };
 
   return (
-    <header className="fixed left-[18dvw] right-0 top-0 z-50 flex h-[10dvh] items-center justify-end border bg-gray-50 px-8 py-2 text-sm font-medium shadow-lg">
+    <header className="fixed left-[18dvw] right-0 top-0 z-0 flex h-[10dvh] items-center justify-end border bg-gray-50 px-8 py-2 text-sm font-medium shadow-lg">
       <nav className="flex items-center justify-center gap-4">
         <ul className="flex gap-4">
           <li className="relative">

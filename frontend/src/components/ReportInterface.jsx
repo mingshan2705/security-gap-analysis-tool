@@ -3,6 +3,9 @@ import React, { useEffect, useState } from "react";
 function ReportInterface({ requestId, onGenerateReport }) {
   const [reports, setReports] = useState({});
   const [loadingStates, setLoadingStates] = useState({});
+  const [viewMode, setViewMode] = useState("table"); // Default to "table" view
+  const [tooltipContent, setTooltipContent] = useState(null);
+  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
 
   useEffect(() => {
     if (requestId) {
@@ -13,8 +16,8 @@ function ReportInterface({ requestId, onGenerateReport }) {
           let running = true;
 
           setTimeout(() => {
-            running = false
-          }, 60000)
+            running = false;
+          }, 60000);
           while (running) {
             try {
               const response = await fetch(
@@ -72,6 +75,71 @@ function ReportInterface({ requestId, onGenerateReport }) {
   const currentReport = reports[requestId];
   const currentLoadingState = loadingStates[requestId];
 
+  const formatTextWithLineBreaks = (text) => {
+    return text.split(/(?=\d\.\s)/).map((line, index) => (
+      <p key={index} className="mb-2">
+        {line.trim()}
+      </p>
+    ));
+  };
+
+  const renderTable = (data) => {
+    const keys = ["ID", "Result", "Risk Statement", "Test Procedure", "Recommendation"];
+    return (
+      <div className="overflow-auto max-h-[60vh]">
+        <table className="min-w-full bg-white mt-2 border">
+          <thead>
+            <tr>
+              {keys.map((key) => (
+                <th
+                  key={key}
+                  className={`py-2 px-4 border-b border-gray-200 bg-gray-100 text-left text-sm font-semibold text-gray-600 ${
+                    key === "Risk Statement" ? "w-1/6" : ""
+                  }`}
+                >
+                  {key}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {keys.map((key) => (
+                  <td key={key} className="py-2 px-4 border-b border-gray-200 text-sm">
+                    {key === "ID" ? (
+                      <div
+                        onMouseEnter={(e) => {
+                          setTooltipContent(row.citation);
+                          setTooltipPosition({ top: e.clientY + 10, left: e.clientX + 10 });
+                        }}
+                        onMouseLeave={() => setTooltipContent(null)}
+                      >
+                        {row.testoutputid}
+                      </div>
+                    ) : key === "Recommendation" || key === "Test Procedure" ? (
+                      formatTextWithLineBreaks(row[key.toLowerCase().replace(" ", "")])
+                    ) : (
+                      row[key.toLowerCase().replace(" ", "")]
+                    )}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {tooltipContent && (
+          <div
+            className="fixed bg-white p-2 border rounded shadow-lg"
+            style={{ top: tooltipPosition.top, left: tooltipPosition.left }}
+          >
+            {tooltipContent}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col w-full p-4">
       <div className="flex items-center justify-between mb-4">
@@ -87,8 +155,8 @@ function ReportInterface({ requestId, onGenerateReport }) {
       </div>
       {currentLoadingState === "in progress" && (
         <div className="flex justify-center items-center">
-          <div className="loader"></div>
-          <p className="ml-4">Report generation in progress...</p>
+          <div className="loader border-t-4 border-blue-500 rounded-full w-8 h-8 animate-spin"></div>
+          <p className="ml-4">Loading Report...</p>
         </div>
       )}
       {currentLoadingState === "failed" && (
@@ -103,8 +171,25 @@ function ReportInterface({ requestId, onGenerateReport }) {
           <p className="mb-4">
             <strong>Date Requested:</strong> {new Date(currentReport.submitdatetime).toLocaleString()}
           </p>
-          <h4 className="text-lg font-semibold mb-2">Report Data</h4>
-          <pre className="bg-gray-100 p-4 rounded">{JSON.stringify(currentReport, null, 2)}</pre>
+          <div className="mb-4">
+            <button
+              onClick={() => setViewMode("json")}
+              className={`mr-2 px-4 py-2 rounded ${viewMode === "json" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"}`}
+            >
+              JSON View
+            </button>
+            <button
+              onClick={() => setViewMode("table")}
+              className={`px-4 py-2 rounded ${viewMode === "table" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700"}`}
+            >
+              Table View
+            </button>
+          </div>
+          {viewMode === "json" ? (
+            <pre className="bg-gray-100 p-4 rounded overflow-auto max-h-[60vh]">{JSON.stringify(currentReport, null, 2)}</pre>
+          ) : (
+            renderTable(currentReport.testoutput)
+          )}
         </div>
       ) : (
         !requestId && (

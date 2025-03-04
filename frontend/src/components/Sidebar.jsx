@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { FaInfoCircle } from "react-icons/fa"; // Import the info icon
+import ClassificationModal from "./ClassificationModal";
 
 function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange, selectedDataClassification, selectedSensitivityClassification, onGenerateReport, onRefreshReports }) {
   const dataClassificationOptions = [
@@ -24,6 +26,8 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
     const savedCount = localStorage.getItem('requestCount');
     return savedCount ? parseInt(savedCount, 10) : 0;
   });
+  const [isDataModalOpen, setIsDataModalOpen] = useState(false);
+  const [isSensitivityModalOpen, setIsSensitivityModalOpen] = useState(false);
 
   useEffect(() => {
     setDataClassification(selectedDataClassification || dataClassificationOptions[0].title);
@@ -128,7 +132,15 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
 
       {/* Security Guidelines Selection */}
       <div className="w-full flex flex-col gap-2 border-b pb-4">
-        <p className="text-lg font-bold">2. Select a Data Classification</p>
+        <p className="text-lg font-bold flex items-center">
+          2. Select a Data Classification
+          <button
+            onClick={() => setIsDataModalOpen(true)}
+            className="ml-2 text-blue-500 hover:text-blue-700"
+          >
+            <FaInfoCircle />
+          </button>
+        </p>
         <select
           value={dataClassification}
           onChange={(e) => {
@@ -147,7 +159,15 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
 
       {/* Sensitivity Guidelines Selection */}
       <div className="w-full flex flex-col gap-2 border-b pb-4">
-        <p className="text-lg font-bold">3. Select a Sensitivity Classification</p>
+        <p className="text-lg font-bold flex items-center">
+          3. Select a Sensitivity Classification
+          <button
+            onClick={() => setIsSensitivityModalOpen(true)}
+            className="ml-2 text-blue-500 hover:text-blue-700"
+          >
+            <FaInfoCircle />
+          </button>
+        </p>
         <select
           value={sensitivityClassification}
           onChange={(e) => {
@@ -188,6 +208,9 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
         <div>User Guide</div>
         <div>Settings</div>
       </div>
+
+      <ClassificationModal isOpen={isDataModalOpen} onClose={() => setIsDataModalOpen(false)} type="data" />
+      <ClassificationModal isOpen={isSensitivityModalOpen} onClose={() => setIsSensitivityModalOpen(false)} type="sensitivity" />
     </aside>
   );
 }
