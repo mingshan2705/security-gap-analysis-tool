@@ -28,6 +28,7 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
   });
   const [isDataModalOpen, setIsDataModalOpen] = useState(false);
   const [isSensitivityModalOpen, setIsSensitivityModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // Add loading state
 
   useEffect(() => {
     setDataClassification(selectedDataClassification || dataClassificationOptions[0].title);
@@ -61,10 +62,16 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
       return;
     }
 
+    setIsLoading(true); // Set loading state to true
+
     const fileReaders = selectedFiles.map((file, index) => {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = (e) => resolve({ testInputId: `T${String(index + 1).padStart(3, '0')}`, testInputName: file.name, testInputText: e.target.result });
+        reader.onload = (e) => resolve({
+          testinputid: `T${String(index + 1).padStart(3, '0')}`,
+          testinputname: file.name,
+          testinputtext: e.target.result
+        });
         reader.onerror = reject;
         reader.readAsText(file);
       });
@@ -76,16 +83,20 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
         localStorage.setItem('requestCount', newCount);
         return newCount;
       });
+
       const reportData = {
         requestid: `sga${String(requestCount + 1).padStart(4, '0')}`,
         reportname: reportName,
         submitdatetime: new Date().toISOString(),
         dataclassification: dataClassification,
         sensitivityclassification: sensitivityClassification,
-        testinput: filesContent,
+        testinput: filesContent, // List of objects with the specified format
       };
 
       onGenerateReport(reportData.requestid);  // Immediately display the ReportInterface with the new requestId
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 1800000); // 30 minutes timeout
 
       fetch("https://sga-backend1-ekdwgybbecgbedhk.southeastasia-01.azurewebsites.net/api/generate-report", {
         method: 'POST',
@@ -94,19 +105,57 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
         },
         mode: 'cors',
         body: JSON.stringify(reportData),
+        signal: controller.signal
       }).then(response => {
+        clearTimeout(timeoutId); // Clear the timeout
         if (response.ok) {
-          onRefreshReports();  // Call onRefreshReports to refresh the recent reports
+          checkReportStatus(reportData.requestid); // Check the status of the report generation
+        } else {
+          setIsLoading(false); // Set loading state to false
+          alert("Failed to generate report.");
+        }
+      }).catch((error) => {
+        if (error.name === 'AbortError') {
+          alert("Report generation timed out.");
         } else {
           alert("Failed to generate report.");
         }
-      }).catch(() => {
-        alert("Failed to generate report.");
+        setIsLoading(false); // Set loading state to false
       });
     }).catch(error => {
+      setIsLoading(false); // Set loading state to false
       console.error("Error reading files:", error);
       alert("Failed to read files.");
     });
+  };
+
+  const checkReportStatus = (requestId) => {
+    const interval = setInterval(() => {
+      fetch(`https://sga-backend1-ekdwgybbecgbedhk.southeastasia-01.azurewebsites.net/api/reports/${requestId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        mode: 'cors',
+      }).then(response => response.json())
+        .then(data => {
+          if (data.message !== "Report not found") {
+            clearInterval(interval); // Clear the interval
+            setIsLoading(false); // Set loading state to false
+            onRefreshReports(); // Call onRefreshReports to refresh the recent reports
+          }
+        }).catch(() => {
+          clearInterval(interval); // Clear the interval
+          setIsLoading(false); // Set loading state to false
+          alert("Failed to check report status.");
+        });
+    }, 30000); // Check every 30 seconds
+
+    setTimeout(() => {
+      clearInterval(interval); // Clear the interval after 10 minutes
+      setIsLoading(false); // Set loading state to false
+      alert("Report generation timed out.");
+    }, 1800000); // 30 minutes
   };
 
   return (
@@ -200,8 +249,9 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
       <button
         onClick={handleGenerateReport}
         className="mt-4 rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
+        disabled={isLoading} // Disable button when loading
       >
-        Generate Report
+        {isLoading ? "Generating Report..." : "Generate Report"} {/* Show loading text */}
       </button>
 
       <div className="mt-auto flex flex-col items-center gap-2">

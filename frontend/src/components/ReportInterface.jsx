@@ -17,7 +17,7 @@ function ReportInterface({ requestId, onGenerateReport }) {
 
           setTimeout(() => {
             running = false;
-          }, 60000);
+          }, 6000000);
           while (running) {
             try {
               const response = await fetch(
@@ -35,6 +35,7 @@ function ReportInterface({ requestId, onGenerateReport }) {
               break;
             }
             if (checker && checker.message && checker.message === "Report not found") {
+              await new Promise((resolve) => setTimeout(resolve, 40000));
               continue;
             }
             setReports((prev) => ({ ...prev, [requestId]: checker }));
@@ -78,7 +79,7 @@ function ReportInterface({ requestId, onGenerateReport }) {
   const formatTextWithLineBreaks = (text) => {
     return text.split(/(?=\d\.\s)/).map((line, index) => (
       <p key={index} className="mb-2">
-        {line.trim()}
+        {line.replace(/0\.\s/g, '0. ').trim()}
       </p>
     ));
   };

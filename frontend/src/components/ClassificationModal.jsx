@@ -5,7 +5,6 @@ function ClassificationModal({ isOpen, onClose, type }) {
 
   const dataClassificationContent = (
     <div>
-      <h3 className="text-xl font-semibold">Definition of Data Classification</h3>
       <ul className="list-disc list-inside">
         <li><strong>RESTRICTED</strong> - Cause some damage to an Agency;</li>
         <li><strong>CONFIDENTIAL</strong> - Cause some damage to national interests, or serious damage to an Agency; CONFIDENTIAL data that ONLY causes damage to an Agency (with no damage to national interest) shall be marked as CONFIDENTIAL (CLOUD-ELIGIBLE).</li>
@@ -20,7 +19,6 @@ function ClassificationModal({ isOpen, onClose, type }) {
 
   const sensitivityClassificationContent = (
     <div>
-      <h3 className="text-xl font-semibold">Definition of Sensitivity Classification</h3>
       <p className="mt-2"><strong>For INDIVIDUALS</strong>, agencies shall assign one of the following sensitivity classifications to data on individuals, based on the potential impact to the individual if the data is disclosed without authorization:</p>
       <ul className="list-disc list-inside">
         <li><strong>NON-SENSITIVE</strong> - Negligible or no physical, financial, or emotional damage to the individual, including personal information that is generally available or is reasonably expected to be generally available;</li>
