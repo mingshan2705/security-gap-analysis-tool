@@ -30,7 +30,7 @@ function Navbar({ onSelectReport, refreshReports }) {
               Recent Reports
             </button>
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg z-50 max-h-[50vh] overflow-y-auto">
+              <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg z-500 max-h-[25vh] overflow-y-auto">
                 {recentReports.length > 0 ? (
                   recentReports.map((report, index) => (
                     <button
@@ -49,7 +49,7 @@ function Navbar({ onSelectReport, refreshReports }) {
           </li>
         </ul>
         <div className="flex aspect-square w-12 items-center justify-center rounded-full border-2 border-black bg-gray-300">
-          MS
+          GT
         </div>
       </nav>
     </header>

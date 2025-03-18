@@ -2,20 +2,23 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaInfoCircle } from "react-icons/fa"; // Import the info icon
 import ClassificationModal from "./ClassificationModal";
+import govtechLogo from "../images/govtechlogo.png"; // Adjust the path as needed
 
 function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange, selectedDataClassification, selectedSensitivityClassification, onGenerateReport, onRefreshReports }) {
   const dataClassificationOptions = [
-    { title: "Confidential", description: "" },
-    { title: "Confidential (Cloud-Eligible)", description: "" },
-    { title: "Restricted", description: "" },
     { title: "Official (Closed)", description: "" },
     { title: "Official (Open)", description: "" },
+    { title: "Restricted", description: "" },
+    { title: "Confidential (Cloud-Eligible)", description: "" },
+    { title: "Confidential", description: "" },
+    { title: "Secret", description: "" },
+    { title: "Top Secret", description: "" },
   ];
 
   const sensitivityClassificationOptions = [
-    { title: "Sensitive High", description: "" },
-    { title: "Sensitive Normal", description: "" },
     { title: "Sensitive Low", description: "" },
+    { title: "Sensitive Normal", description: "" },
+    { title: "Sensitive High", description: "" },
   ];
 
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -147,23 +150,26 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
         }).catch(() => {
           clearInterval(interval); // Clear the interval
           setIsLoading(false); // Set loading state to false
-          alert("Failed to check report status.");
+          // alert("Failed to check report status.");
         });
-    }, 30000); // Check every 30 seconds
+    }, 5000); // Check every 5 seconds
 
     setTimeout(() => {
       clearInterval(interval); // Clear the interval after 10 minutes
       setIsLoading(false); // Set loading state to false
       alert("Report generation timed out.");
-    }, 1800000); // 30 minutes
+    }, 3600000); // 60 minutes
   };
 
   return (
     <aside className="fixed top-0 left-0 h-full w-[18dvw] flex flex-col items-center gap-4 border-r bg-white p-4 text-sm font-medium shadow-lg">
       <Link to="/">
-        <div className="flex items-center rounded-md border-2 border-gray-300 p-[2vh] text-[2.8vh] font-bold tracking-wider transition-colors duration-100 hover:bg-gray-100">
-          <h1 className="pb-[1.5vh] text-blue-400">SECURITY</h1>
-          <h1 className="pt-[1.5vh] text-slate-600">BOT</h1>
+        <div className="flex items-center rounded-md border-2 border-gray-300 p-[2vh] transition-colors duration-100 hover:bg-gray-100">
+          <img 
+            src={govtechLogo} 
+            alt="GovTech Logo" 
+            className="object-contain h-[6vh] w-auto" 
+          />
         </div>
       </Link>
 
@@ -254,10 +260,6 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
         {isLoading ? "Generating Report..." : "Generate Report"} {/* Show loading text */}
       </button>
 
-      <div className="mt-auto flex flex-col items-center gap-2">
-        <div>User Guide</div>
-        <div>Settings</div>
-      </div>
 
       <ClassificationModal isOpen={isDataModalOpen} onClose={() => setIsDataModalOpen(false)} type="data" />
       <ClassificationModal isOpen={isSensitivityModalOpen} onClose={() => setIsSensitivityModalOpen(false)} type="sensitivity" />
