@@ -52,7 +52,12 @@ function ReportInterface({ requestId, onGenerateReport }) {
               await new Promise((resolve) => setTimeout(resolve, 10000));
               continue;
             }
-
+            
+            if (checker && checker.testoutput && checker.testoutput.length === 0) {
+              setLoadingStates((prev) => ({ ...prev, [requestId]: "failed" }));
+              break;
+            }
+            
             setReports((prev) => ({ ...prev, [requestId]: checker }));
             setLoadingStates((prev) => ({ ...prev, [requestId]: "completed" }));
             break;
@@ -354,11 +359,11 @@ function ReportInterface({ requestId, onGenerateReport }) {
       )}
 
       {currentLoadingState === "completed" && currentReport ? (
-        <div className="flex-grow p-6 border rounded-lg shadow-lg bg-white">
+        <div className="flex-grow p-6 border rounded-lg h-100vh shadow-lg bg-white">
           <h3 className="text-xl font-semibold mb-2">{currentReport.reportname}</h3>
-          <p className="mb-1">
+          {/* <p className="mb-1">
             <strong>Request ID:</strong> {currentReport.requestid}
-          </p>
+          </p> */}
           <p className="mb-1">
             <strong>Date Requested:</strong> {new Date(currentReport.submitdatetime).toLocaleString()}
           </p>

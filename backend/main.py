@@ -178,3 +178,10 @@ async def download_report(request_id: str):
 @app.get("/api/health")
 async def health_check():
     return {"status": "ok"}
+
+
+@app.delete("/api/reports/{request_id}")
+async def delete_report(request_id: str):
+    global reports
+    reports = [report for report in reports if report["requestid"] != request_id]
+    return {"message": "Report deleted successfully" if len(reports) < len(reports) else "Report not found"}

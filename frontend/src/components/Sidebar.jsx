@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaInfoCircle } from "react-icons/fa"; // Import the info icon
 import ClassificationModal from "./ClassificationModal";
-import govtechLogo from "../images/govtechlogo.png"; // Adjust the path as needed
+import govtechLogo from "../images/govtechlogo.png";
+import { v4 as uuidv4 } from 'uuid';
 
 function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange, selectedDataClassification, selectedSensitivityClassification, onGenerateReport, onRefreshReports }) {
   const dataClassificationOptions = [
@@ -25,10 +26,10 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
   const [reportName, setReportName] = useState("");
   const [dataClassification, setDataClassification] = useState(selectedDataClassification || dataClassificationOptions[0].title);
   const [sensitivityClassification, setSensitivityClassification] = useState(selectedSensitivityClassification || sensitivityClassificationOptions[0].title);
-  const [requestCount, setRequestCount] = useState(() => {
-    const savedCount = localStorage.getItem('requestCount');
-    return savedCount ? parseInt(savedCount, 10) : 0;
-  });
+  // const [requestCount, setRequestCount] = useState(() => {
+  //   const savedCount = localStorage.getItem('requestCount');
+  //   return savedCount ? parseInt(savedCount, 10) : 0;
+  // });
   const [isDataModalOpen, setIsDataModalOpen] = useState(false);
   const [isSensitivityModalOpen, setIsSensitivityModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // Add loading state
@@ -41,9 +42,9 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
     setSensitivityClassification(selectedSensitivityClassification || sensitivityClassificationOptions[0].title);
   }, [selectedSensitivityClassification]);
 
-  useEffect(() => {
-    localStorage.setItem('requestCount', requestCount);
-  }, [requestCount]);
+  // useEffect(() => {
+  //   localStorage.setItem('requestCount', requestCount);
+  // }, [requestCount]);
 
   const handleFileUpload = (event) => {
     const files = Array.from(event.target.files);
@@ -81,14 +82,17 @@ function Sidebar({ onDataClassificationChange, onSensitivityClassificationChange
     });
 
     Promise.all(fileReaders).then(filesContent => {
-      setRequestCount(prevCount => {
-        const newCount = prevCount + 1;
-        localStorage.setItem('requestCount', newCount);
-        return newCount;
-      });
+      // setRequestCount(prevCount => {
+      //   const newCount = prevCount + 1;
+      //   localStorage.setItem('requestCount', newCount);
+      //   return newCount;
+      // });
+
+      const uniqueRequestId = `sga-${uuidv4()}`;
 
       const reportData = {
-        requestid: `sga${String(requestCount + 1).padStart(4, '0')}`,
+        // requestid: `sga${String(requestCount + 1).padStart(4, '0')}`,
+        requestid: uniqueRequestId,
         reportname: reportName,
         submitdatetime: new Date().toISOString(),
         dataclassification: dataClassification,
